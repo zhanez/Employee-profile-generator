@@ -9,53 +9,109 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-// var manager questions
 
 
-var questions =[{
-    type:"input",
-    message:"What is the employee's name?",
-    name:"name"
-},{
-    type:"input",
-    message:"What is the employee's id?",
-    name:"id"
-},{
-    type:"input",
-    message:"what is the employee's email?",
-    name:"email"
+
+var questions = [{
+    type: "input",
+    message: "What is the employee's name?",
+    name: "name"
+}, {
+    type: "input",
+    message: "What is the employee's id?",
+    name: "id"
+}, {
+    type: "input",
+    message: "what is the employee's email?",
+    name: "email"
 }]
+
+
+
+var internQuestion = [{
+    type: "input",
+    messages: "What's the employee's school?",
+    name: "school"
+}]
+
+var engineerQuestion = [{
+    type: "input",
+    messages: "What is your github name?",
+    name: "github"
+
+}]
+
+
 
 // managers- add employee
 
-function managerQuestions(){
+function managerQuestions() {
     inquirer.prompt([
-        ...questions,{
-            type:"input",
-            message:"What's the employee's office number?",
-            name:"officeNumber"
-        }
-    ]
-    )
+        ...questions, {
+            type: "input",
+            message: "What's the employee's office number?",
+            name: "officeNumber"
+        }]).then ((internQuestion)=>{
+            var newManager = new Manager (internQuestion.name, internQuestion.id, internQuestion.email.internQuestion.officeNumber);
+            teamQuestion.push(newManager);
+            employeeInput();
+
+        });
 }
 
-// .then
-// add more employee
-//     type:"list",
-//     message:"Do you want to add another employee?",
-//     choices:["yes", "no"],
-//     name:"employee"
-// },{
-//     type:"list",
-//     message:"Which type of employee would you like to add?",
-//     choices:["Engineer", "Intern", "None"],
-//     name:"employeeType"
-var internQuestion =[{
-    type:"input",
-    messages:"What's the employee's school?",
-    name:"school"
+function employeeInput(){
+    return inquirer.prompt([{
+        type:"list",
+        message:"Do you want to add another employee?",
+        choices:["yes", "no"],
+        name:"employee"
+    },{ 
+        type:"list",
+        message:"Which type of employee would you like to add?",
+        choices:[{name:"Engineer", value: 0}, {name: "Intern", value:1}, {name:"None", value:2}],
+        name:"employeeType"
+    }]).then ((employeeType)=> {
+        if (employeeType.newEmployee ===0) {
+            engineerQuestion();
 
-}]
+        } else if (employeeType.newEmployee ===1){
+            internQuestion();
+        } else {
+            createHtmlFile();
+        }
+    })
+}
+
+
+
+
+function internQuestions() {
+    return inquirer.prompt([
+        ...questions, {
+            type: "input",
+            messages: "What's the employee's school?",
+            name: "school"
+        }]).then ((internQuestion)=>{
+            var newIntern = new Intern (internQuestion.name, internQuestion.id, internQuestion.email.internQuestion.school);
+            teamQuestion.push(newIntern);
+            employeeInput();
+        });
+}
+
+
+function engineerQuestions() {
+    return inquirer.prompt([
+        ...questions, {
+            type: "input",
+            messages: "What is your github name?",
+            name: "github"
+        }]).then ((engineerQuestion)=>{
+            var newEngineer = new Engineer (engineerQuestion.name, engineerQuestion.id, engineerQuestion.email.engineerQuestion.school);
+            teamQuestion.push(newEngineer);
+            employeeInput();
+        });
+}
+
 
 
 
@@ -65,6 +121,16 @@ var internQuestion =[{
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
+
+function createHtmlFile(){
+    var employeeTeamPage =render (teamQuestion);
+    fs.writeFile("./output/team.html", employeeTeamPage,(err)=> {
+        if (err) console.log("err");
+    
+        else console.log("successful");
+    });
+}
+questions();
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
