@@ -10,7 +10,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-
+var team =[]
 
 var questions = [{
     type: "input",
@@ -26,15 +26,13 @@ var questions = [{
     name: "email"
 }]
 
-
-
-var internQuestion = [{
+var internQuestions = [{
     type: "input",
     messages: "What's the employee's school?",
     name: "school"
 }]
 
-var engineerQuestion = [{
+var engineerQuestions = [{
     type: "input",
     messages: "What is your github name?",
     name: "github"
@@ -52,8 +50,8 @@ function managerQuestions() {
             message: "What's the employee's office number?",
             name: "officeNumber"
         }]).then ((internQuestion)=>{
-            var newManager = new Manager (internQuestion.name, internQuestion.id, internQuestion.email.internQuestion.officeNumber);
-            teamQuestion.push(newManager);
+            var newManager = new Manager (internQuestion.name, internQuestion.id, internQuestion.email, internQuestion.officeNumber);
+            team.push(newManager);
             employeeInput();
 
         });
@@ -72,10 +70,10 @@ function employeeInput(){
         name:"employeeType"
     }]).then ((employeeType)=> {
         if (employeeType.newEmployee ===0) {
-            engineerQuestion();
+            engineerQuestions();
 
         } else if (employeeType.newEmployee ===1){
-            internQuestion();
+            internQuestions();
         } else {
             createHtmlFile();
         }
@@ -87,13 +85,20 @@ function employeeInput(){
 
 function internQuestions() {
     return inquirer.prompt([
-        ...questions, {
+        { 
             type: "input",
             messages: "What's the employee's school?",
             name: "school"
-        }]).then ((internQuestion)=>{
-            var newIntern = new Intern (internQuestion.name, internQuestion.id, internQuestion.email.internQuestion.school);
-            teamQuestion.push(newIntern);
+        }
+
+        // ...questions, {
+        //     type: "input",
+        //     messages: "What's the employee's school?",
+        //     name: "school"
+        // }
+    ]).then ((internQuestion)=>{
+            var newIntern = new Intern (internQuestion.name, internQuestion.id, internQuestion.email, internQuestion.school);
+            team.push(newIntern);
             employeeInput();
         });
 }
@@ -106,8 +111,8 @@ function engineerQuestions() {
             messages: "What is your github name?",
             name: "github"
         }]).then ((engineerQuestion)=>{
-            var newEngineer = new Engineer (engineerQuestion.name, engineerQuestion.id, engineerQuestion.email.engineerQuestion.school);
-            teamQuestion.push(newEngineer);
+            var newEngineer = new Engineer (engineerQuestion.name, engineerQuestion.id, engineerQuestion.email, engineerQuestion.school);
+            team.push(newEngineer);
             employeeInput();
         });
 }
@@ -123,14 +128,23 @@ function engineerQuestions() {
 // generate and return a block of HTML including templated divs for each employee!
 
 function createHtmlFile(){
-    var employeeTeamPage =render (teamQuestion);
-    fs.writeFile("./output/team.html", employeeTeamPage,(err)=> {
-        if (err) console.log("err");
+    var employeeTeamPage =render (team);
+    fs.writeFile("team.html", employeeTeamPage,(err)=> {
+        if (err) console.log(err);
     
         else console.log("successful");
+
     });
+    // fs.writeFile(outputPath, data, function(err){
+    //     if (err) {
+    //     console.log (err)
+    //     }
+    //     else {console.log("successful")
+
+    //     }
+    // });
 }
-questions();
+managerQuestions();
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
