@@ -26,18 +26,18 @@ var questions = [{
     name: "email"
 }]
 
-var internQuestions = [{
-    type: "input",
-    messages: "What's the employee's school?",
-    name: "school"
-}]
+// var internQuestions = [{
+//     type: "input",
+//     messages: "What's the employee's school?",
+//     name: "school"
+// }]
 
-var engineerQuestions = [{
-    type: "input",
-    messages: "What is your github name?",
-    name: "github"
+// var engineerQuestions = [{
+//     type: "input",
+//     messages: "What is your github name?",
+//     name: "github"
 
-}]
+// }]
 
 
 
