@@ -58,7 +58,7 @@ function managerQuestions() {
 }
 
 function employeeInput(){
-    return inquirer.prompt([{
+    inquirer.prompt([{
         type:"list",
         message:"Do you want to add another employee?",
         choices:["yes", "no"],
@@ -69,11 +69,30 @@ function employeeInput(){
         choices:[{name:"Engineer", value: 0}, {name: "Intern", value:1}, {name:"None", value:2}],
         name:"employeeType"
     }]).then ((employeeType)=> {
-        if (employeeType.newEmployee ===0) {
-            engineerQuestions();
+        if (employeeType.employeeType ===0) {
+            inquirer.prompt([
+                ...questions, {
+                    type: "input",
+                    messages: "What is your github name?",
+                    name: "github"
+                }]).then ((engineerQuestion)=>{
+                    var newEngineer = new Engineer (engineerQuestion.name, engineerQuestion.id, engineerQuestion.email, engineerQuestion.school);
+                    team.push(newEngineer);
+                    employeeInput();
+                });
 
-        } else if (employeeType.newEmployee ===1){
-            internQuestions();
+        } else if (employeeType.employeeType ===1){
+            inquirer.prompt([
+                ...questions, {
+                    type: "input",
+                    messages: "What's the employee's school?",
+                    name: "school"
+                }
+            ]).then ((internQuestion)=>{
+                    var newIntern = new Intern (internQuestion.name, internQuestion.id, internQuestion.email, internQuestion.school);
+                    team.push(newIntern);
+                    employeeInput();
+                });
         } else {
             createHtmlFile();
         }
@@ -83,39 +102,7 @@ function employeeInput(){
 
 
 
-function internQuestions() {
-    return inquirer.prompt([
-        { 
-            type: "input",
-            messages: "What's the employee's school?",
-            name: "school"
-        }
 
-        // ...questions, {
-        //     type: "input",
-        //     messages: "What's the employee's school?",
-        //     name: "school"
-        // }
-    ]).then ((internQuestion)=>{
-            var newIntern = new Intern (internQuestion.name, internQuestion.id, internQuestion.email, internQuestion.school);
-            team.push(newIntern);
-            employeeInput();
-        });
-}
-
-
-function engineerQuestions() {
-    return inquirer.prompt([
-        ...questions, {
-            type: "input",
-            messages: "What is your github name?",
-            name: "github"
-        }]).then ((engineerQuestion)=>{
-            var newEngineer = new Engineer (engineerQuestion.name, engineerQuestion.id, engineerQuestion.email, engineerQuestion.school);
-            team.push(newEngineer);
-            employeeInput();
-        });
-}
 
 
 
@@ -135,14 +122,6 @@ function createHtmlFile(){
         else console.log("successful");
 
     });
-    // fs.writeFile(outputPath, data, function(err){
-    //     if (err) {
-    //     console.log (err)
-    //     }
-    //     else {console.log("successful")
-
-    //     }
-    // });
 }
 managerQuestions();
 
